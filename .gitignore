@@ -8,6 +8,9 @@ runbooks/
 
 node_modules/
 
+
+!backend/initialize_db.ps1
+!backend/initialize_db.sh
 *.ps1
 *.sh
 *.bat
