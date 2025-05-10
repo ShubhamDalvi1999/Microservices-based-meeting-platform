@@ -9,8 +9,7 @@ runbooks/
 node_modules/
 
 
-!backend/initialize_db.ps1
-!backend/initialize_db.sh
+
 *.ps1
 *.sh
 *.bat
@@ -19,6 +18,9 @@ node_modules/
 *.dll
 *.lib
 *.exp
+
+!backend/initialize_db.ps1
+!backend/initialize_db.sh
 
 PROJECT_BACKLOG.md
 Road-map.md
