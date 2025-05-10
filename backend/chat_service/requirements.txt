@@ -1,0 +1,9 @@
+Flask
+Flask-SocketIO
+eventlet # or gevent, for async mode with Flask-SocketIO
+redis # For Flask-SocketIO message queue
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+PyJWT
+Flask-JWT-Extended 

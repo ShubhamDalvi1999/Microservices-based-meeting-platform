@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: appdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" # Optional: Expose for direct DB access if needed during dev
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  auth-service:
+    build: ./backend/auth_service
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - AUTH_SERVICE_SECRET_KEY=${AUTH_SERVICE_SECRET_KEY}
+    volumes:
+      - ./backend/auth_service/migrations:/app/migrations
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+
+  meeting-service:
+    build: ./backend/meeting_service
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+    volumes:
+      - ./backend/meeting_service/migrations:/app/migrations
+    ports:
+      - "5002:5000"
+    depends_on:
+      - db
+      - redis
+      - auth-service
+
+  chat-service:
+    build: ./backend/chat_service
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=${FLASK_ENV:-development}
+      - REDIS_URL=${REDIS_URL}
+      - CHAT_SERVICE_SECRET_KEY=${CHAT_SERVICE_SECRET_KEY}
+    volumes:
+      - ./backend/chat_service/migrations:/app/migrations
+    ports:
+      - "5003:5000"
+    depends_on:
+      - redis
+      - auth-service
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Nginx in container runs on 80, mapped to host 3000
+    depends_on:
+      - auth-service
+      - meeting-service
+      - chat-service
+
+volumes:
+  db-data: # Persists PostgreSQL data 

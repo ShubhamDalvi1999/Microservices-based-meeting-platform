@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+psycopg2-binary
+Flask-JWT-Extended
+Flask-Bcrypt
+python-dotenv # Good practice for loading .env vars
+pydantic # Added for data validation
+email-validator # Required for Pydantic email validation
+flask-cors 
